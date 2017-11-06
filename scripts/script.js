@@ -1,3 +1,7 @@
+function onLoad() {
+	$("#calendar")[0].style.display = "block";
+}
+
 function openTab(event, tabName) {
 	var i, tabContent, tabLinks;
 	

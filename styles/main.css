@@ -1,5 +1,16 @@
 /* CSS Document */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+	margin-bottom: 10px;
+}
+
 body {
+	max-width: 1200px;
+	margin: 20px auto;
 	font-family: 'Gill Sans', 'Gill Sans MT', 'Myriad Pro', 'DejaVu Sans Condensed', Helvetica, Arial, 'sans-serif';
 }
 
@@ -28,13 +39,42 @@ div.tab button.active {
     background-color: #cccccc;
 }
 
-.tab_content {
-    display: none;
+div.tab_content {
+	display: none;
     padding: 6px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #cccccc;
     border-top: none;
 	-webkit-animation: fadeEffect 1s;
     animation: fadeEffect 1s;
+}
+
+div.cal_toolbar {
+	text-align: center;
+}
+
+div.cal_toolbar_left {
+	float: left;
+	
+}
+
+div.cal_toolbar_center {
+	display: inline-block;
+}
+
+div.cal_toolbar_right {
+	float: right;
+	
+}
+
+div.cal_navbutton_group button, div.cal_modebutton_group button {
+	color: white;
+	border: none;
+	cursor: pointer;
+	padding: 5px 15px;
+	font-size: 13px;
+	background-color: darkred;
+	transition: 0.1s;
+	margin: 0;
 }
 
 /* Fade in tabs */
