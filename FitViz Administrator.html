@@ -7,13 +7,26 @@
 </head>
 
 <body>
+	<header><h1>FitViz Administrator Console</h1></header>
 	<div class="tab">
-		<button class="tablinks" onClick="openTab(event, 'Calendar‘)">Calendar View</button>
-		<button class="tablinks" onClick="openTab(event, 'Calendar‘)">User View</button>
-		<button class="tablinks" onClick="openTab(event, 'Calendar‘)">Calendar View</button>
-		
+		<button class="tab_links" onclick="openTab(event, 'Calendar')">Calendar</button>
+		<button class="tab_links" onclick="openTab(event, 'Settings')">Settings</button>
 	</div>
 	
-	<script src="scripts/d3/d3.js"></script>
+	<div id="Calendar" class="tab_content">
+		<div class="toolbar"></div>
+		<table>
+			<tr>
+				
+			</tr>
+		</table>
+	</div>
+	<div id="Settings" class="tab_content">
+		<p>(Settings here)</p>
+	</div>
+	
+	<script src="scripts/d3/d3.min.js"></script>
+	<script src="scripts/jquery-3.2.1.min.js"></script>
+	<script src="scripts/script.js"></script>
 </body>
 </html>
