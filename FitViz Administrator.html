@@ -9,8 +9,8 @@
 <body onload="onLoad()">
 	<header><h1>FitViz Administrator Console</h1></header>
 	<div class="tab">
-		<button class="tab_links" onclick="openTab(event, 'calendar')">Calendar</button>
-		<button class="tab_links" onclick="openTab(event, 'settings')">Settings</button>
+		<button class="tab_links active" onclick="openTab(event, 'calendar')">Calendar</button>
+		<button class="tab_links" onclick="openTab(event, 'day')">Day</button>
 	</div>
 	
 	<div id="calendar" class="tab_content">
@@ -27,20 +27,33 @@
 			</div>
 			<div class="cal_toolbar_right">
 				<div class="cal_modebutton_group">
-					<button id="modebutton_month">Month</button>
+					<button class="active" id="modebutton_month">Month</button>
 					<button id="modebutton_week">Week</button>
 					<button id="modebutton_day">Day</button>
 				</div>
 			</div>
 		</div>
-		<table>
-			<tr>
-				
-			</tr>
-		</table>
+		<div class="cal_body">
+			<table class="cal_body_table">
+				<thead class="cal_body_thead_container" id="cal_thead">
+					<tr class="cal_body_weekday_container">
+						<th class="cal_body_weekday" id="cal_sun"><span>Sunday</span></th>
+						<th class="cal_body_weekday" id="cal_mon"><span>Monday</span></th>
+						<th class="cal_body_weekday" id="cal_tue"><span>Tuesday</span></th>
+						<th class="cal_body_weekday" id="cal_wed"><span>Wednesday</span></th>
+						<th class="cal_body_weekday" id="cal_thu"><span>Thursday</span></th>
+						<th class="cal_body_weekday" id="cal_fri"><span>Friday</span></th>
+						<th class="cal_body_weekday" id="cal_sat"><span>Saturday</span></th>
+					</tr>
+				</thead>
+				<tbody class="cal_body_tbody_container" id="cal_tbody">
+
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<div id="settings" class="tab_content">
-		<p>(Settings here)</p>
+	<div id="day" class="tab_content">
+		<p>(Day view here)</p>
 	</div>
 	
 	<script src="scripts/d3/d3.min.js"></script>

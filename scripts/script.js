@@ -19,5 +19,5 @@ function openTab(event, tabName) {
 	
 	//show current tab
 	$("#" + tabName)[0].style.display = "block";
-	event.currentTarget.className += "active";
+	event.currentTarget.className += " active";
 }
