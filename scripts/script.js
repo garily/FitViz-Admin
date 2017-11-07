@@ -20,7 +20,7 @@ function loadData() {
         for (var i = 0; i < csvData[0].length; i ++) {
             //adjust dataSet to proper json
             csvData[0][i]["time"] = new Date(csvData[0][i]["time"].replace(" UTC", "Z").replace(" ", "T"));
-            csvData[0][i]["name"] = csvData[0][i]["name"].replace('\$','');
+            csvData[0][i]["name"] = csvData[0][i]["name"].replace('\$','').replace("Signed in or refreshed page", "view");
             csvData[0][i]["properties"] = JSON.parse(csvData[0][i]["properties"]);
         }
 
@@ -112,7 +112,6 @@ function displayMonth(data, date) {
 			date = new Date(startDate.getFullYear(), startDate.getMonth(), i * 7 + j + 1 - startDate.getDay())
 			grid.dataRow[i].day[j].date = date;
 			grid.dataRow[i].day[j].content = selectDate(data, date);
-			console.log(grid.dataRow[i].day[j].content);
         }
 	}
 
@@ -125,7 +124,7 @@ function displayMonth(data, date) {
 			$("#week-row-" + i).append("<td class='cal_body_day_cell'><div class='cal_body_day_num'>"
             	+ grid.dataRow[i].day[j].date.getDate()
             	+ "</div>" + "<div class='cal_body_day_content'>"
-				+ grid.dataRow[i].day[j].content
+				+ grid.dataRow[i].day[j].content.toString()
 				+ "</div></td>");
 		}
 		//tbody.append(grid.dataRow[i].rowHtmlEnd);
@@ -148,7 +147,7 @@ function selectDate(arr, d) {
 	for (var i = 0 ; i < arr.length; i ++) {
 		if (arr[i]["time"] <= new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59)
         	&& arr[i]["time"] >= new Date(d.getFullYear(), d.getMonth(), d.getDate())) {
-			result.push(arr[i]);
+			result.push(arr[i]["name"]);
 		}
 	}
 	return result;

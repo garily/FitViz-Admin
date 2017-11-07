@@ -128,7 +128,7 @@ div.cal_body_day_num {
 }
 
 div.cal_body_day_content {
-    padding-left: 25px;
+    padding: 0 10px 10px 25px;
     overflow: scroll;
     max-height: 80%;
 }
