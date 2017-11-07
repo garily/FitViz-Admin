@@ -89,8 +89,9 @@ function MonthGrid(date) {
 	this.curMon = monthNames[date.getMonth()];
     this.nextMon = monthNames[(date.getMonth() + 1) % 12];
     this.dataRow = [];
-    this.dataRow.rowHtml;
-    this.dataRow.dayHtml = {};
+    this.dataRow.day = {};
+    this.dataRow.day.date = {};
+    this.dataRow.day.content = {};
 }
 
 //display month including target day
@@ -105,28 +106,36 @@ function displayMonth(data, date) {
 	var gridRows = Math.ceil((startDate.getDay() + endDate.getDate()) / 7);
 	for (var i = 0 ; i < gridRows ; i ++) {
 		grid.dataRow.push([]);
-		grid.dataRow[i].rowHtml = "<tr class='cal_body_week_container' id='week-row-" + i + "'>";
-        grid.dataRow[i].dayHtml = [];
+        grid.dataRow[i].day = [];
 		for (var j = 0 ; j < 7 ; j ++) {
-			grid.dataRow[i].dayHtml.push([]);
-			grid.dataRow[i].dayHtml[j] = "<td class='cal_body_day_cell'><div class='cal_body_day'>"
-				+ new Date(startDate.getFullYear(), startDate.getMonth(), i * 7 + j - startDate.getDay()).getDate() +
-				"</div></td>";
+			grid.dataRow[i].day.push([]);
+			date = new Date(startDate.getFullYear(), startDate.getMonth(), i * 7 + j + 1 - startDate.getDay())
+			grid.dataRow[i].day[j].date = date;
+			grid.dataRow[i].day[j].content = selectDate(data, date);
+			console.log(grid.dataRow[i].day[j].content);
         }
-        //grid.dataRow[i].rowHtmlEnd = "</tr>";
 	}
 
 
 	//display grid
-	var thead = $(".cal_toolbar_center").append("<h2>" + grid.curYear + " " + grid.curMon + "</h2>" );
+	$(".cal_toolbar_center").append("<h2>" + grid.curYear + " " + grid.curMon + "</h2>" );
 	for (i = 0 ; i < gridRows ; i ++) {
-        $("#cal_tbody").append(grid.dataRow[i].rowHtml);
+        $("#cal_tbody").append("<tr class='cal_body_week_container' id='week-row-" + i + "'>");
 		for (j = 0 ; j < 7 ; j ++) {
-			$("#week-row-" + i).append(grid.dataRow[i].dayHtml[j]);
+			$("#week-row-" + i).append("<td class='cal_body_day_cell'><div class='cal_body_day_num'>"
+            	+ grid.dataRow[i].day[j].date.getDate()
+            	+ "</div>" + "<div class='cal_body_day_content'>"
+				+ grid.dataRow[i].day[j].content
+				+ "</div></td>");
 		}
 		//tbody.append(grid.dataRow[i].rowHtmlEnd);
 	}
 
+    $(".cal_body_day_cell").click(function() {
+    	openTab(event, 'day_view');
+    	$("#day")[0].className += " active";
+        //move to day view
+    });
 }
 
 //display week including target day
@@ -134,7 +143,18 @@ function displayWeek(data, date) {
 
 }
 
+function selectDate(arr, d) {
+	var result = [];
+	for (var i = 0 ; i < arr.length; i ++) {
+		if (arr[i]["time"] <= new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59)
+        	&& arr[i]["time"] >= new Date(d.getFullYear(), d.getMonth(), d.getDate())) {
+			result.push(arr);
+		}
+	}
+	return result;
+}
 
+//set startDate and endDate for visible calendar
 function setStartEndDate(d) {
         startDate = new Date(d.getFullYear(), d.getMonth(), 1);
         endDate = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);

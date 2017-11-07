@@ -116,11 +116,21 @@ th.cal_body_weekday{
 }
 
 td.cal_body_day_cell {
+    border-collapse: collapse;
     border: 1px solid #cccccc;
-    width: 14.28%;
     height: 120px;
+    max-height: 120px;
+}
+
+div.cal_body_day_num {
     padding: 5px;
-    vertical-align: top;
+    height: 20%;
+}
+
+div.cal_body_day_content {
+    padding-left: 25px;
+    overflow: scroll;
+    max-height: 80%;
 }
 
 #modebutton_week, #modebutton_day {
