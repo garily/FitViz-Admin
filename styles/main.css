@@ -130,7 +130,7 @@ div.cal_body_day_num {
 div.cal_body_day_content {
     padding: 0 10px 10px 25px;
     overflow: scroll;
-    max-height: 80%;
+    height: 80%;
 }
 
 #modebutton_week, #modebutton_day {
