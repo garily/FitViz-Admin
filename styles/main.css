@@ -93,6 +93,7 @@ div.cal_body {
 
 table.cal_body_table {
     border-collapse: collapse;
+    border: 2px solid #cccccc;
     margin: auto;
     width: 95%;
 }
@@ -101,6 +102,30 @@ thead.cal_body_thead_container {
     border: 1px solid #cccccc;
 }
 
+tbody.cal_body_tbody_container {
+    border: 1px solid #cccccc;
+}
+
+tr.cal_body_week_container {
+    width: 100%;
+}
+
+th.cal_body_weekday{
+    border: 1px solid #cccccc;
+    width: 14.28%;
+}
+
+td.cal_body_day_cell {
+    border: 1px solid #cccccc;
+    width: 14.28%;
+    height: 120px;
+    padding: 5px;
+    vertical-align: top;
+}
+
+#modebutton_week, #modebutton_day {
+    display: none;
+}
 
 
 /* Fade in tabs */
