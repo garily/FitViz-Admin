@@ -44,6 +44,13 @@ function loadData() {
         else if (dataStartDate > endDate) {
             displayMode('month')(dataSet, dataStartDate);
         }
+
+        $("#navbutton_left").click(function() {
+        	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1))
+        });
+        $("#navbutton_right").click(function() {
+        	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1))
+        });
 	});
 }
 
@@ -111,21 +118,24 @@ function displayMonth(data, date) {
 			grid.dataRow[i].day.push([]);
 			date = new Date(startDate.getFullYear(), startDate.getMonth(), i * 7 + j + 1 - startDate.getDay())
 			grid.dataRow[i].day[j].date = date;
-			grid.dataRow[i].day[j].content = selectDate(data, date);
+			grid.dataRow[i].day[j].content = fillDate(data, date);
         }
 	}
 
 
+	//refresh body
+    $("#cal_tbody").html('');
+
 	//display grid
-	$(".cal_toolbar_center").append("<h2>" + grid.curYear + " " + grid.curMon + "</h2>" );
+	$(".cal_toolbar_center").html("<h2>" + grid.curYear + " " + grid.curMon + "</h2>" );
 	for (i = 0 ; i < gridRows ; i ++) {
         $("#cal_tbody").append("<tr class='cal_body_week_container' id='week-row-" + i + "'>");
 		for (j = 0 ; j < 7 ; j ++) {
 			$("#week-row-" + i).append("<td class='cal_body_day_cell'><div class='cal_body_day_num'>"
             	+ grid.dataRow[i].day[j].date.getDate()
-            	+ "</div>" + "<div class='cal_body_day_content'>"
+            	+ "</div>" + "<div class='cal_body_day_content'><p>"
 				+ grid.dataRow[i].day[j].content.toString()
-				+ "</div></td>");
+				+ "</p></div></td>");
 		}
 		//tbody.append(grid.dataRow[i].rowHtmlEnd);
 	}
@@ -142,12 +152,12 @@ function displayWeek(data, date) {
 
 }
 
-function selectDate(arr, d) {
+function fillDate(arr, d) {
 	var result = [];
 	for (var i = 0 ; i < arr.length; i ++) {
 		if (arr[i]["time"] <= new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59)
         	&& arr[i]["time"] >= new Date(d.getFullYear(), d.getMonth(), d.getDate())) {
-			result.push(arr[i]["name"]);
+			result.push(arr[i]["name"] + ' ');
 		}
 	}
 	return result;
