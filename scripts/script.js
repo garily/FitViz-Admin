@@ -62,7 +62,13 @@ function loadData() {
             displayMode('month')(dataSet, dataStartDate);
         }
 
-        //set onClickListeners for navigation buttons
+        //set onClickListeners for tabs and navigation buttons
+		$("#calendar_tab").click(function () {
+            openTab(event, 'calendar_view');
+		});
+        $("#day_tab").click(function() {
+            openTab(event, 'day_view');
+		})
         $("#navbutton_left").click(function() {
         	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
         });
