@@ -7,7 +7,9 @@
 </head>
 
 <body onload="onLoad()">
-	<header><h1>FitViz Administrator Console</h1></header>
+	<header>
+		<h1>FitViz Administrator Console</h1>
+	</header>
 	<div class="tab">
 		<button class="tab_links active" id="calendar" onclick="openTab(event, 'calendar_view')">Calendar</button>
 		<button class="tab_links" id="day" onclick="openTab(event, 'day_view')">Day</button>
@@ -26,11 +28,21 @@
 			</div>
 			<div class="cal_toolbar_right">
 				<div class="cal_modebutton_group">
-					<button class="active" id="modebutton_month">Month</button>
+					<button id="modebutton_month">Month</button>
 					<button id="modebutton_week">Week</button>
 					<button id="modebutton_day">Day</button>
 				</div>
 			</div>
+		</div>
+		<div style="display: block; height: 20px; width: 95%; margin: 3px auto; text-align: right;">
+			<div style="display: inline-block; background-color: #69bcbe; width: 10px; height: 10px"></div>
+			<span>Sign-in&nbsp;&nbsp;</span>
+			<div style="display: inline-block; background-color: #6c82a0; width: 10px; height: 10px"></div>
+			<span>View&nbsp;&nbsp;</span>
+			<div style="display: inline-block; background-color: #f5eb81; width: 10px; height: 10px"></div>
+			<span>Click&nbsp;&nbsp;</span>
+			<div style="display: inline-block; background-color: #df6a40; width: 10px; height: 10px"></div>
+			<span>Submit</span>
 		</div>
 		<div class="cal_body">
 			<table class="cal_body_table">

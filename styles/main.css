@@ -82,7 +82,7 @@ div.cal_navbutton_group button, div.cal_modebutton_group button {
     cursor: pointer;
     padding: 5px 15px;
     font-size: 13px;
-    background-color: darkred;
+    background-color: #9f2820;
     transition: 0.1s;
     margin: 0;
 }
@@ -110,31 +110,63 @@ tr.cal_body_week_container {
     width: 100%;
 }
 
+tr.cal_body_week_container:nth-child(odd) {
+    background-color: ghostwhite;
+}
+
+div.record_action {
+    display: inline-block;
+    text-align: center;
+    margin: 2px;
+    width: 50px;
+    height: 35px;
+    line-height: 35px;
+}
+
+div.signin {
+    background-color: #69bcbe;
+}
+
+div.view {
+    background-color: #6c82a0;
+}
+
+div.click {
+    background-color: #f5eb81;
+}
+
+div.submit {
+    background-color: #df6a40;
+}
+
 th.cal_body_weekday{
     border: 1px solid #cccccc;
     width: 14.28%;
 }
 
-td.cal_body_day_cell {
+td.cal_body_date_cell {
     border-collapse: collapse;
     border: 1px solid #cccccc;
     height: 120px;
-    max-height: 120px;
 }
 
-div.cal_body_day_num {
+div.cal_body_date {
     padding: 5px;
     height: 20%;
 }
 
-div.cal_body_day_content {
+div.not_current_month {
+    color: #b1b1b1;
+}
+
+div.cal_body_date_content {
     padding: 0 10px 10px 25px;
     overflow: scroll;
     word-wrap: break-word;
     height: 80%;
 }
 
-#modebutton_week, #modebutton_day {
+#modebutton_month, #modebutton_week, #modebutton_day {
     display: none;
 }
 
