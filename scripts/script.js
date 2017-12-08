@@ -12,7 +12,7 @@ function MonthGrid(date) {
     this.dataRow.day = {};
     this.dataRow.day.date = {};
     this.dataRow.day.content = {};
-    this.dataRow.day.if_current_month = true;
+    this.dataRow.day.ifCurrentMonth= true;
 }
 
 function DateCellContent() {
@@ -68,7 +68,7 @@ function loadData() {
 		});
         $("#day_tab").click(function() {
             openTab(event, 'day_view');
-		})
+		});
         $("#navbutton_left").click(function() {
         	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
         });
@@ -137,7 +137,7 @@ function displayMonth(data, date) {
 			//if not current month
 			if ((i * 7 + j + 1 - startDate.getDay() <= 0)
 				|| (i * 7 + j + 1 - startDate.getDay() > endDate.getDate())) {
-                grid.dataRow[i].day[j].if_current_month = false;
+                grid.dataRow[i].day[j].ifCurrentMonth = false;
 			}
 			grid.dataRow[i].day[j].content = fillDateCell(data, grid.dataRow[i].day[j].date);
         }
@@ -154,7 +154,7 @@ function displayMonth(data, date) {
         tbody.append("<tr class='cal_body_week_container' id='week-row-" + i + "'>");
 		for (j = 0 ; j < 7 ; j ++) {
 			var content = grid.dataRow[i].day[j].content;
-			var if_current_month = !(grid.dataRow[i].day[j].if_current_month === false) ? "" : " not_current_month";
+			var if_current_month = !(grid.dataRow[i].day[j].ifCurrentMonth === false) ? "" : " not_current_month";
 
 			//populating signin, view, click, and submit counts
             var div_signin = content.signin.length === 0 ?

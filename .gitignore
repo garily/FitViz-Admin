@@ -1,4 +1,4 @@
-data/data.csv
+data/*
 *.iml
 .idea/*
 .idea
