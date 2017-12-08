@@ -42,7 +42,7 @@ function loadData() {
         }
 
         //sort dataSet by ascending time
-        dataSet = csvData[0].sort(sortByTimeAscending);
+        dataSet = csvData[0].sort(byTimeAscending);
 
 
         //if the last day of record earlier than the current month/year, display the month of the last record
@@ -64,10 +64,10 @@ function loadData() {
 
         //set onClickListeners for tabs and navigation buttons
 		$("#calendar_tab").click(function () {
-            openTab(event, 'calendar_view');
+            openTab(event, 'calendar_view', null);
 		});
         $("#day_tab").click(function() {
-            openTab(event, 'day_view');
+            openTab(event, 'day_view', dataEndDate);
 		});
         $("#navbutton_left").click(function() {
         	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
@@ -81,8 +81,10 @@ function loadData() {
 	});
 }
 
-function openTab(event, tabName) {
+function openTab(event, tabName, date) {
 	var i, tabContent, tabLinks;
+
+	if (date instanceof Date && tabName === 0);
 	
 	//hide tabs
 	tabContent = $('.tab_content');
@@ -101,8 +103,8 @@ function openTab(event, tabName) {
 	event.currentTarget.className += " active";
 }
 
-function sortByTimeAscending(a, b) {
-    // Dates will be casted to numbers automagically:
+function byTimeAscending(a, b) {
+    // Dates will be casted to numbers automatically:
     return a.time - b.time;
 }
 
@@ -110,8 +112,8 @@ function displayMode(s) {
 	switch(s) {
 		case 'month':
 			return displayMonth;
-		case 'week':
-			return displayWeek;
+		case 'day':
+			return displayDay;
 		default:
 			return displayMonth;
 	}
@@ -173,22 +175,34 @@ function displayMonth(data, date) {
             	+ "</div>" + "<div class='cal_body_date_content'><p>"
 				+ div_signin + div_view + div_click + div_submit
 				+ "</p></div></td>";
+
+            // tbody.children()[i].children[j].click( function() {
+            //     //set onClickListener for non-null cells only
+            //     if (this.children[1].innerHTML === "") return;
+            //
+            //     //move to day view
+            //     openTab(event, 'day_view', grid.dataRow[i].day[j].date);
+            //     $("#day_view")[0].className += " active";
+            // })
 		}
 		//tbody.append(grid.dataRow[i].rowHtmlEnd);
 	}
 
-    $(".cal_body_date_cell").click(function() {
-    	//set onClickListener for non-null cells only
-    	if (this.children[1].innerHTML === "") return;
+	var dayCells = $(".cal_body_date_cell");
+		dayCells.each( function(index) {
+			$(this).on( "click", function() {
+				//set onClickListener for non-null cells only
+				if (this.children[1].innerHTML === "<p></p>") return;
 
-        //move to day view
-    	openTab(event, 'day_view');
-    	$("#day")[0].className += " active";
-    });
+				//move to day view
+				openTab(event, 'day_view', grid.dataRow[Math.floor(index / 7)].day[(index % 7)].date);
+				$("#day_tab")[0].className += " active";
+			});
+		});
 }
 
 //display week including target day
-function displayWeek(data, date) {
+function displayDay(data, date) {
 
 }
 
