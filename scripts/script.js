@@ -30,19 +30,19 @@ function onLoad() {
 function loadData() {
 	var q = d3.queue();
 	q.defer(d3.csv, "data/data.csv");
-	q.awaitAll(function(e, csvData) {
+	q.awaitAll(function(e, sourceData) {
 		if (e) throw e;
-		else if (csvData[0].length === 0) return;
+		else if (sourceData[0].length === 0) return;
 
-        for (var i = 0; i < csvData[0].length; i ++) {
+        for (var i = 0; i < sourceData[0].length; i ++) {
             //adjust dataSet to proper json
-            csvData[0][i].time = new Date(csvData[0][i].time.replace(" UTC", "Z").replace(" ", "T"));
-            csvData[0][i].name = csvData[0][i].name.replace('\$','').replace("Signed in or refreshed page", "signin");
-            csvData[0][i].properties = JSON.parse(csvData[0][i].properties);
+            sourceData[0][i].time = new Date(sourceData[0][i].time.replace(" UTC", "Z").replace(" ", "T"));
+            sourceData[0][i].name = sourceData[0][i].name.replace('\$','').replace("Signed in or refreshed page", "signin");
+            sourceData[0][i].properties = JSON.parse(sourceData[0][i].properties);
         }
 
         //sort dataSet by ascending time
-        dataSet = csvData[0].sort(byTimeAscending);
+        dataSet = sourceData[0].sort(byTimeAscending);
 
 
         //if the last day of record earlier than the current month/year, display the month of the last record
@@ -53,14 +53,16 @@ function loadData() {
         setStartEndDate(d);
 
         if (!(dataStartDate instanceof Date) || !(dataEndDate instanceof Date)) {
-            displayMode('month')(dataSet, d);
+            setContent('month')(dataSet, d);
         }
         else if (dataEndDate < startDate) {
-            displayMode('month')(dataSet, dataEndDate);
+            setContent('month')(dataSet, dataEndDate);
         }
         else if (dataStartDate > endDate) {
-            displayMode('month')(dataSet, dataStartDate);
+            setContent('month')(dataSet, dataStartDate);
         }
+
+        openTab(event, 'calendar_view', null);
 
         //set onClickListeners for tabs and navigation buttons
 		$("#calendar_tab").click(function () {
@@ -70,37 +72,53 @@ function loadData() {
             openTab(event, 'day_view', dataEndDate);
 		});
         $("#navbutton_left").click(function() {
-        	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
+        	setContent('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
         });
         $("#navbutton_right").click(function() {
-        	displayMode('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1));
+        	setContent('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1));
         });
         $("#navbutton_today").click(function() {
-            displayMode('month')(dataSet, new Date());
+            setContent('month')(dataSet, new Date());
         });
 	});
 }
 
-function openTab(event, tabName, date) {
+function openTab(event, tabContentName, date) {
 	var i, tabContent, tabLinks;
+	var dayTab = $("#day_tab")[0];
+	var calendarTab = $("#calendar_tab")[0];
 
-	if (date instanceof Date && tabName === 0);
-	
-	//hide tabs
-	tabContent = $('.tab_content');
-	for (i = 0 ; i < tabContent.length ; i ++) {
-		tabContent[i].style.display = "none";
+	//If not already in day view
+    if (date instanceof Date && tabContentName === 'day_view' && dayTab.className.toString().search("active") === -1) {
+    	setContent('day')(dataSet, date);
+    }
+
+    //hide tabs
+    tabContent = $('.tab_content');
+    for (i = 0 ; i < tabContent.length ; i ++) {
+        tabContent[i].style.display = "none";
+    }
+
+    //deactivate tabs
+    tabLinks = $('.tab_links');
+    for (i = 0 ; i < tabLinks.length ; i ++) {
+        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+    }
+
+    //show targeted tab
+    $("#" + tabContentName)[0].style.display = "block";
+
+    switch(tabContentName) {
+		case 'day_view':
+			dayTab.className += " active";
+			break;
+		case 'calendar_view':
+			calendarTab.className += " active";
+			break;
+		default:
+			event.currentTarget.className += " active";
 	}
-	
-	//deactivate tabs
-	tabLinks = $('.tab_links');
-	for (i = 0 ; i < tabLinks.length ; i ++) {
-		tabLinks[i].className = tabLinks[i].className.replace("active", ""); 
-	}
-	
-	//show current tab
-	$("#" + tabName)[0].style.display = "block";
-	event.currentTarget.className += " active";
+
 }
 
 function byTimeAscending(a, b) {
@@ -108,19 +126,19 @@ function byTimeAscending(a, b) {
     return a.time - b.time;
 }
 
-function displayMode(s) {
+function setContent(s) {
 	switch(s) {
 		case 'month':
-			return displayMonth;
+			return setMonthContent;
 		case 'day':
-			return displayDay;
+			return setDayContent;
 		default:
-			return displayMonth;
+			return setMonthContent;
 	}
 }
 
 //display month including target day
-function displayMonth(data, date) {
+function setMonthContent(data, date) {
 	if (typeof data === 'undefined' || !data) return;
 
 	setStartEndDate(date);
@@ -176,16 +194,7 @@ function displayMonth(data, date) {
 				+ div_signin + div_view + div_click + div_submit
 				+ "</p></div></td>";
 
-            // tbody.children()[i].children[j].click( function() {
-            //     //set onClickListener for non-null cells only
-            //     if (this.children[1].innerHTML === "") return;
-            //
-            //     //move to day view
-            //     openTab(event, 'day_view', grid.dataRow[i].day[j].date);
-            //     $("#day_view")[0].className += " active";
-            // })
 		}
-		//tbody.append(grid.dataRow[i].rowHtmlEnd);
 	}
 
 	var dayCells = $(".cal_body_date_cell");
@@ -196,13 +205,19 @@ function displayMonth(data, date) {
 
 				//move to day view
 				openTab(event, 'day_view', grid.dataRow[Math.floor(index / 7)].day[(index % 7)].date);
-				$("#day_tab")[0].className += " active";
 			});
 		});
 }
 
-//display week including target day
-function displayDay(data, date) {
+//display
+function setDayContent(data, date) {
+    if (typeof data === 'undefined' || !data) return;
+
+    var singleDayData = data.filter(function (e) {
+    	return (e.time >= new Date(date.getFullYear(), date.getMonth(), date.getDate()))
+			&& (e.time <= new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59));
+	});
+    console.log(singleDayData);
 
 }
 
