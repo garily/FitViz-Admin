@@ -29,9 +29,10 @@ function onLoad() {
 
 function loadData() {
 	var q = d3.queue();
+
 	q.defer(d3.csv, "data/data.csv");
-	q.awaitAll(function(e, sourceData) {
-		if (e) throw e;
+	q.awaitAll(function(error, sourceData) {
+		if (error) throw error;
 		else if (sourceData[0].length === 0) return;
 
         for (var i = 0; i < sourceData[0].length; i ++) {
@@ -43,6 +44,8 @@ function loadData() {
 
         //sort dataSet by ascending time
         dataSet = sourceData[0].sort(byTimeAscending);
+
+        console.log(dataSet);
 
 
         //if the last day of record earlier than the current month/year, display the month of the last record
@@ -62,7 +65,7 @@ function loadData() {
             setContent('month')(dataSet, dataStartDate);
         }
 
-        openTab(event, 'calendar_view', null);
+        openTab(this, 'calendar_view', null);
 
         //set onClickListeners for tabs and navigation buttons
 		$("#calendar_tab").click(function () {
