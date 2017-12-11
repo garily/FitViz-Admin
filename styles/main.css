@@ -142,6 +142,8 @@ div.submit {
 th.cal_body_weekday{
     border: 1px solid #cccccc;
     width: 14.28%;
+    padding-top: 1px;
+    padding-bottom: 1px;
 }
 
 td.cal_body_date_cell {

@@ -27,31 +27,43 @@ function onLoad() {
     loadData();
 }
 
+
+
 function loadData() {
 	var q = d3.queue();
+	dataSet = [];
 
-	q.defer(d3.csv, "data/data.csv");
+	for (var i = 1; i <= 32 ; i ++) {
+		q.defer(d3.csv, "data/" + i + ".csv");
+	}
+
+	//q.defer(d3.csv, "data/data.csv");
 	q.awaitAll(function(error, sourceData) {
 		if (error) throw error;
-		else if (sourceData[0].length === 0) return;
+		//else if (sourceData[0].length === 0) return;
 
-        for (var i = 0; i < sourceData[0].length; i ++) {
-            //adjust dataSet to proper json
-            sourceData[0][i].time = new Date(sourceData[0][i].time.replace(" UTC", "Z").replace(" ", "T"));
-            sourceData[0][i].name = sourceData[0][i].name.replace('\$','').replace("Signed in or refreshed page", "signin");
-            sourceData[0][i].properties = JSON.parse(sourceData[0][i].properties);
-        }
+		for (var j = 0; j < sourceData.length ; j ++) {
+            for (i = 0; i < sourceData[j].length; i ++) {
+                //adjust dataSet to proper json
+                sourceData[j][i].time = new Date(sourceData[j][i].time.replace(" UTC", "Z").replace(" ", "T"));
+                sourceData[j][i].name = sourceData[j][i].name.replace('\$','').replace("Signed in or refreshed page", "signin");
+                sourceData[j][i].properties = JSON.parse(sourceData[j][i].properties);
+            }
+            dataSet.push(sourceData[j].sort(byTimeAscending));
+		}
+
+		console.log(dataSet);
+
 
         //sort dataSet by ascending time
-        dataSet = sourceData[0].sort(byTimeAscending);
-
-        console.log(dataSet);
+        //dataSet = sourceData[0].sort(byTimeAscending);
 
 
         //if the last day of record earlier than the current month/year, display the month of the last record
 		//if the first day record later than the current month/year, display the month of the first record
-        var dataStartDate = dataSet[0].time;//["time"];
-        var dataEndDate = dataSet[dataSet.length - 1].time;
+        var dataStartDate = findStartDate(dataSet);
+        var dataEndDate = findEndDate(dataSet);
+
         var d = new Date();
         setStartEndDate(d);
 
@@ -124,6 +136,24 @@ function openTab(event, tabContentName, date) {
 
 }
 
+
+function findStartDate(dataArr) {
+	var startDate = dataArr[0][0].time;
+	for (var i = 0; i < dataArr.length ; i ++) {
+		if (startDate > dataArr[i][0].time) startDate = dataArr[i][0].time;
+	}
+	return startDate;
+}
+
+function findEndDate(dataArr) {
+    var endDate = dataArr[0][dataArr[0].length - 1].time;
+    for (var i = 0; i < dataArr.length ; i ++) {
+        if (endDate < dataArr[i][dataArr[i].length - 1].time) endDate = dataArr[i][dataArr[i].length - 1].time;
+    }
+    return endDate;
+
+}
+
 function byTimeAscending(a, b) {
     // Dates will be casted to numbers automatically:
     return a.time - b.time;
@@ -132,16 +162,16 @@ function byTimeAscending(a, b) {
 function setContent(s) {
 	switch(s) {
 		case 'month':
-			return setMonthContent;
+			return setMonthViewContent;
 		case 'day':
-			return setDayContent;
+			return setDayViewContent;
 		default:
-			return setMonthContent;
+			return setMonthViewContent;
 	}
 }
 
 //display month including target day
-function setMonthContent(data, date) {
+function setMonthViewContent(data, date) {
 	if (typeof data === 'undefined' || !data) return;
 
 	setStartEndDate(date);
@@ -213,45 +243,57 @@ function setMonthContent(data, date) {
 }
 
 //display
-function setDayContent(data, date) {
+function setDayViewContent(data, date) {
     if (typeof data === 'undefined' || !data) return;
 
-    var singleDayData = data.filter(function (e) {
-    	return (e.time >= new Date(date.getFullYear(), date.getMonth(), date.getDate()))
-			&& (e.time <= new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59));
-	});
-    console.log(singleDayData);
+    var singleDayData = [];
+    var tmp;
 
-}
-
-function fillDateCell(arr, d) {
-	var result = new DateCellContent();
-	for (var i = 0 ; i < arr.length; i ++) {
-		if (arr[i].time <= new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59)
-        	&& arr[i].time >= new Date(d.getFullYear(), d.getMonth(), d.getDate())) {
-			switch (arr[i].name) {
-				case "click":
-					result.click.push(arr[i].properties);
-					break;
-				case "view":
-					result.view.push(arr[i].properties);
-					break;
-				case "submit":
-					result.submit.push(arr[i].properties);
-					break;
-				case "signin":
-					result.signin.push(arr[i].properties);
-					break;
-				default:
-					break;
-			}
-		}
+    for (var i = 0 ; i < data.length ; i ++) {
+    	tmp = data[i].filter(function (e) {
+            return (e.time >= new Date(date.getFullYear(), date.getMonth(), date.getDate()))
+                && (e.time <= new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59));
+        });
+		if (tmp.length !== 0) singleDayData.push(tmp);
 	}
-	return result;
+
+    singleDayData.forEach(function (e) {
+    	console.log(e[0].user_id);
+	});
+
 }
 
 //set startDate and endDate for visible calendar
 function setStartEndDate(d) {
-        startDate = new Date(d.getFullYear(), d.getMonth(), 1);
-        endDate = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+    startDate = new Date(d.getFullYear(), d.getMonth(), 1);
+    endDate = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+}
+
+function fillDateCell(data, d) {
+	var result = new DateCellContent();
+	for (var j = 0 ; j < data.length ; j ++) {
+        for (var i = 0 ; i < data[j].length ; i ++) {
+            if (data[j][i].time <= new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59)
+                && data[j][i].time >= new Date(d.getFullYear(), d.getMonth(), d.getDate())) {
+                switch (data[j][i].name) {
+                    case "click":
+                        result.click.push(data[j][i].properties);
+                        break;
+                    case "view":
+                        result.view.push(data[j][i].properties);
+                        break;
+                    case "submit":
+                        result.submit.push(data[j][i].properties);
+                        break;
+                    case "signin":
+                        result.signin.push(data[j][i].properties);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+	}
+
+	return result;
 }
