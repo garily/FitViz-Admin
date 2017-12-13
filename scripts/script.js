@@ -248,6 +248,7 @@ function setDayViewContent(data, date) {
 
     var singleDayData = [];
     var tmp;
+    var dayCards = $("#day_cards");
 
     for (var i = 0 ; i < data.length ; i ++) {
     	tmp = data[i].filter(function (e) {
@@ -258,9 +259,44 @@ function setDayViewContent(data, date) {
 	}
 
     singleDayData.forEach(function (e) {
-    	console.log(e[0].user_id);
+        var ifDaily = false;
+		var ifCalendar = true;
+		var ifRecom = false;
+		var ifClinician = false;
+
+
+    	e.forEach(function (el) {
+    		if (el.name === "click") {
+    			if (el.properties.tag === "a") {
+    				switch (el.properties.id) {
+						case "ui-id-1":
+							ifDaily = true;
+							break;
+						case "ui-id-3":
+							ifRecom = true;
+							break;
+						case "ud-id-4":
+							ifClinician = true;
+							break;
+						default:
+							break;
+    				}
+                }
+			}
+		});
+    	dayCards.append("<div class='day_card'><h4>User:&nbsp;"
+			+ e[0].user_id + "</h4>"
+			+ "<p>Daily:&nbsp;" + boolToYesNo(ifDaily) + "</p>"
+			+ "<p>Calendar:&nbsp;" + boolToYesNo(ifCalendar) + "</p>"
+			+ "<p>Clinician Recommendations:&nbsp;" + boolToYesNo(ifRecom) + "</p>"
+			+ "<p>Check Clinician:&nbsp;" + boolToYesNo(ifClinician) + "</p>"
+		);
 	});
 
+}
+
+function boolToYesNo(boolean) {
+	return boolean ? "Yes" : "No";
 }
 
 //set startDate and endDate for visible calendar

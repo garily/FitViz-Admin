@@ -168,6 +168,23 @@ div.cal_body_date_content {
     height: 80%;
 }
 
+div.day_body {
+    display: block;
+}
+
+div.day_cards {
+    margin: auto;
+    width: 95%;
+}
+
+div.day_card {
+    border: 1px solid #cccccc;
+    padding: 10px;
+    display: inline-block;
+    margin: 5px;
+    width: 47%;
+}
+
 #modebutton_month, #modebutton_week, #modebutton_day {
     display: none;
 }
