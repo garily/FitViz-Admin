@@ -52,8 +52,6 @@ function loadData() {
             dataSet.push(sourceData[j].sort(byTimeAscending));
 		}
 
-		console.log(dataSet);
-
 
         //sort dataSet by ascending time
         //dataSet = sourceData[0].sort(byTimeAscending);
