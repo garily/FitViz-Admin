@@ -182,7 +182,17 @@ div.day_card {
     padding: 10px;
     display: inline-block;
     margin: 5px;
-    width: 47%;
+    width: 30%;
+}
+
+table.day_card_table {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td.day_card_table_content {
+    width: 50%;
 }
 
 #modebutton_month, #modebutton_week, #modebutton_day {

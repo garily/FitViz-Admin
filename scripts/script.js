@@ -16,10 +16,10 @@ function MonthGrid(date) {
 }
 
 function DateCellContent() {
-	this.click = [];
-	this.submit = [];
-	this.view = [];
-	this.signin = [];
+	this.click = 0;
+	this.submit = 0;
+	this.view = 0;
+	this.signin = 0;
 }
 
 function onLoad() {
@@ -208,14 +208,14 @@ function setMonthViewContent(data, date) {
 			var if_current_month = !(grid.dataRow[i].day[j].ifCurrentMonth === false) ? "" : " not_current_month";
 
 			//populating signin, view, click, and submit counts
-            var div_signin = content.signin.length === 0 ?
-                "" : "<div class='record_action signin'>" + content.signin.length +  "</div>";
-            var div_view = content.view.length === 0 ?
-                "" : "<div class='record_action view'>" + content.view.length +  "</div>";
-			var div_click = content.click.length === 0 ?
-				"" : "<div class='record_action click'>" + content.click.length +  "</div>";
-			var div_submit = content.submit.length === 0 ?
-                "" : "<div class='record_action submit'>" + content.submit.length +  "</div>";
+            var div_signin = content.signin === 0 ?
+                "" : "<div class='record_action signin'>" + content.signin +  "</div>";
+            var div_view = content.view === 0 ?
+                "" : "<div class='record_action view'>" + content.view +  "</div>";
+			var div_click = content.click === 0 ?
+				"" : "<div class='record_action click'>" + content.click +  "</div>";
+			var div_submit = content.submit === 0 ?
+                "" : "<div class='record_action submit'>" + content.submit +  "</div>";
 			//var div_body_date_current_month =
 
 			tbody.children()[i].innerHTML += "<td class='cal_body_date_cell'><div class='cal_body_date"
@@ -247,6 +247,8 @@ function setDayViewContent(data, date) {
     var singleDayData = [];
     var tmp;
     var dayCards = $("#day_cards");
+    dayCards.html("");
+    console.log(dayCards);
 
     for (var i = 0 ; i < data.length ; i ++) {
     	tmp = data[i].filter(function (e) {
@@ -283,11 +285,19 @@ function setDayViewContent(data, date) {
 			}
 		});
     	dayCards.append("<div class='day_card'><h4>User:&nbsp;"
-			+ e[0].user_id + "</h4>"
-			+ "<p>Daily:&nbsp;" + boolToYesNo(ifDaily) + "</p>"
-			+ "<p>Calendar:&nbsp;" + boolToYesNo(ifCalendar) + "</p>"
-			+ "<p>Clinician Recommendations:&nbsp;" + boolToYesNo(ifRecom) + "</p>"
-			+ "<p>Check Clinician:&nbsp;" + boolToYesNo(ifClinician) + "</p>"
+			+ e[0].user_id + "</h4><table class='day_card_table'>"
+			+ "<tr><td class='day_card_table_content'>"
+			+ "<div style='display: inline-block; background-color: #69bcbe; width: 10px; height: 10px'></div>"
+			+ "&nbsp;&nbsp;Daily Tab</td><td class='day_card_table_content'>" + boolToYesNo(ifDaily) + "</td></tr>"
+			+ "<tr><td class='day_card_table_content'>"
+            + "<div style='display: inline-block; background-color: #6c82a0; width: 10px; height: 10px'></div>"
+            + "&nbsp;&nbsp;Calendar Tab</td><td class='day_card_table_content'>" + boolToYesNo(ifCalendar) + "</td></tr>"
+			+ "<tr><td class='day_card_table_content'>"
+            + "<div style='display: inline-block; background-color: #f5eb81; width: 10px; height: 10px'></div>"
+            + "&nbsp;&nbsp;Recommendation Tab</td><td class='day_card_table_content'>" + boolToYesNo(ifRecom) + "</td></tr>"
+			+ "<tr><td class='day_card_table_content'>"
+            + "<div style='display: inline-block; background-color: #df6a40; width: 10px; height: 10px'></div>"
+            + "&nbsp;&nbsp;Clinician Tab</td><td class='day_card_table_content'>" + boolToYesNo(ifClinician) + "</td></tr></table></div>"
 		);
 	});
 
@@ -305,22 +315,47 @@ function setStartEndDate(d) {
 
 function fillDateCell(data, d) {
 	var result = new DateCellContent();
+	var userId = -1;
+	var ifClick = false;
+	var ifView = false;
+	var ifSubmit = false;
+	var ifSignIn = false;
+
 	for (var j = 0 ; j < data.length ; j ++) {
+        if (userId !== data[j][0].user_id) {
+            userId = data[j][0].user_id;
+            ifClick = false;
+            ifView = false;
+            ifSubmit = false;
+            ifSignIn = false;
+        }
         for (var i = 0 ; i < data[j].length ; i ++) {
             if (data[j][i].time <= new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59)
                 && data[j][i].time >= new Date(d.getFullYear(), d.getMonth(), d.getDate())) {
                 switch (data[j][i].name) {
                     case "click":
-                        result.click.push(data[j][i].properties);
+                        if (!ifClick) {
+                        	result.click++;
+                        	ifClick = true;
+                        }
                         break;
                     case "view":
-                        result.view.push(data[j][i].properties);
+                    	if (!ifView) {
+                            result.view++;
+                            ifView = true;
+						}
                         break;
                     case "submit":
-                        result.submit.push(data[j][i].properties);
+                    	if (!ifSubmit) {
+                            result.submit++;
+                    		ifSubmit = true;
+						}
                         break;
                     case "signin":
-                        result.signin.push(data[j][i].properties);
+                    	if (!ifSignIn) {
+                            result.signin ++;
+                            ifSignIn = true;
+						}
                         break;
                     default:
                         break;
