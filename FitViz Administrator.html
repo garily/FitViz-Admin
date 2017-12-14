@@ -17,7 +17,12 @@
 	</header>
 	<div class="tab">
 		<button class="tab_links active" id="calendar_tab">Calendar</button>
-		<button class="tab_links" id="day_tab"git>Day</button>
+		<button class="tab_links" id="day_tab">Day</button>
+		<div class="filters__user_filter">
+			<select class="filters__user_filter--select">
+				<option value="all">All Users</option>
+			</select>
+		</div>
 	</div>
 	
 	<div id="calendar_view" class="tab_content">
@@ -32,10 +37,9 @@
 			<div class="cal_toolbar_center">
 			</div>
 			<div class="cal_toolbar_right">
-				<div class="cal_modebutton_group">
-					<button id="modebutton_month">Month</button>
-					<button id="modebutton_week">Week</button>
-					<button id="modebutton_day">Day</button>
+				<div class="cal_navbutton_group">
+					<button id="navbutton_data_start">Start</button>
+					<button id="navbutton_data_end">End</button>
 				</div>
 			</div>
 		</div>

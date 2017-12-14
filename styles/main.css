@@ -39,6 +39,20 @@ div.tab button.active {
     background-color: #cccccc;
 }
 
+div.filters {
+    display: block;
+}
+
+div.filters__user_filter {
+    padding: 14px 0;
+    margin-right: 40px;
+    float: right;
+}
+
+select.filters__user_filter--select {
+    width: 100px;
+}
+
 div.tab_content {
 	display: none;
     padding: 6px 12px;
@@ -172,6 +186,13 @@ div.day_body {
     display: block;
 }
 
+div.day_view__date {
+    width: 95%;
+    display: block;
+    text-align: left;
+    padding-left: 8px;
+}
+
 div.day_cards {
     margin: auto;
     width: 95%;
@@ -193,10 +214,6 @@ table.day_card_table {
 
 td.day_card_table_content {
     width: 50%;
-}
-
-#modebutton_month, #modebutton_week, #modebutton_day {
-    display: none;
 }
 
 

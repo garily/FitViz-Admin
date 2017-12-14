@@ -1,5 +1,7 @@
 var startDate, endDate;
-var dataSet;
+var dataSet, filteredDataSet;
+var ifExpanded = false;
+
 var monthNames = [
 	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -56,44 +58,82 @@ function loadData() {
         //sort dataSet by ascending time
         //dataSet = sourceData[0].sort(byTimeAscending);
 
+		filteredDataSet = dataSet;
 
-        //if the last day of record earlier than the current month/year, display the month of the last record
-		//if the first day record later than the current month/year, display the month of the first record
-        var dataStartDate = findStartDate(dataSet);
-        var dataEndDate = findEndDate(dataSet);
+        init(filteredDataSet);
 
-        var d = new Date();
-        setStartEndDate(d);
-
-        if (!(dataStartDate instanceof Date) || !(dataEndDate instanceof Date)) {
-            setContent('month')(dataSet, d);
-        }
-        else if (dataEndDate < startDate) {
-            setContent('month')(dataSet, dataEndDate);
-        }
-        else if (dataStartDate > endDate) {
-            setContent('month')(dataSet, dataStartDate);
-        }
-
-        openTab(this, 'calendar_view', null);
-
-        //set onClickListeners for tabs and navigation buttons
-		$("#calendar_tab").click(function () {
-            openTab(event, 'calendar_view', null);
-		});
-        $("#day_tab").click(function() {
-            openTab(event, 'day_view', dataEndDate);
-		});
-        $("#navbutton_left").click(function() {
-        	setContent('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
-        });
-        $("#navbutton_right").click(function() {
-        	setContent('month')(dataSet, new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1));
-        });
-        $("#navbutton_today").click(function() {
-            setContent('month')(dataSet, new Date());
-        });
+        setUserFilter();
 	});
+}
+
+function init(data) {
+    //if the last day of record earlier than the current month/year, display the month of the last record
+    //if the first day record later than the current month/year, display the month of the first record
+    var dataStartDate = findStartDate(data);
+    var dataEndDate = findEndDate(data);
+
+
+    var d = new Date();
+    setStartEndDate(d);
+
+    if (!(dataStartDate instanceof Date) || !(dataEndDate instanceof Date)) {
+        setContent('month')(data, d);
+    }
+    else if (dataEndDate < startDate) {
+        setContent('month')(data, dataEndDate);
+    }
+    else if (dataStartDate > endDate) {
+        setContent('month')(data, dataStartDate);
+    }
+
+    openTab(this, 'calendar_view', null);
+
+    //set onClickListeners for tabs and navigation buttons
+    $("#calendar_tab").off("click").click(function () {
+        openTab(event, 'calendar_view', null);
+    });
+    $("#day_tab").off("click").click(function() {
+        openTab(event, 'day_view', dataEndDate);
+        console.log(dataEndDate);
+    });
+    $("#navbutton_left").off("click").click(function() {
+        setContent('month')(data, new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1));
+    });
+    $("#navbutton_right").off("click").click(function() {
+        setContent('month')(data, new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1));
+    });
+    $("#navbutton_today").off("click").click(function() {
+        setContent('month')(data, new Date());
+    });
+
+    //nav button jumping to start and end month of filtered data
+    $("#navbutton_data_start").off("click").click(function() {
+        setContent('month')(data, dataStartDate);
+    });
+    $("#navbutton_data_end").off("click").click(function() {
+        setContent('month')(data, dataEndDate);
+    });
+}
+
+function setUserFilter() {
+    var userFilter = $(".filters__user_filter--select");
+    userFilter.html("<option value='all'>All Users</option>");
+
+    dataSet.forEach(function (e) {
+    	userFilter.append("<option value='" + e[0].user_id + "'>" + e[0].user_id + "</option>");
+	});
+
+    userFilter.on("change", function () {
+    	changeDataSet(this.value);
+        init(filteredDataSet);
+	});
+}
+
+function changeDataSet(userId) {
+	if (userId === "all") filteredDataSet = dataSet;
+	else filteredDataSet = dataSet.filter(function (e) {
+        return e[0].user_id === userId;
+    });
 }
 
 function openTab(event, tabContentName, date) {
@@ -103,7 +143,8 @@ function openTab(event, tabContentName, date) {
 
 	//If not already in day view
     if (date instanceof Date && tabContentName === 'day_view' && dayTab.className.toString().search("active") === -1) {
-    	setContent('day')(dataSet, date);
+    	console.log(date);
+    	setContent('day')(filteredDataSet, date);
     }
 
     //hide tabs
@@ -121,19 +162,23 @@ function openTab(event, tabContentName, date) {
     //show targeted tab
     $("#" + tabContentName)[0].style.display = "block";
 
+
+    var userFilter = $(".filters__user_filter--select");
+    userFilter.hide();
+
     switch(tabContentName) {
 		case 'day_view':
 			dayTab.className += " active";
 			break;
 		case 'calendar_view':
 			calendarTab.className += " active";
+			userFilter.show();
 			break;
 		default:
 			event.currentTarget.className += " active";
 	}
 
 }
-
 
 function findStartDate(dataArr) {
 	var startDate = dataArr[0][0].time;
@@ -230,7 +275,7 @@ function setMonthViewContent(data, date) {
 
 	var dayCells = $(".cal_body_date_cell");
 		dayCells.each( function(index) {
-			$(this).on( "click", function() {
+			$(this).off("click").on("click", function() {
 				//set onClickListener for non-null cells only
 				if (this.children[1].innerHTML === "<p></p>") return;
 
@@ -247,8 +292,7 @@ function setDayViewContent(data, date) {
     var singleDayData = [];
     var tmp;
     var dayCards = $("#day_cards");
-    dayCards.html("");
-    console.log(dayCards);
+    dayCards.html("<div class='day_view__date'><h3>" + monthNames[date.getMonth()] + "&nbsp;" + date.getDate() + "</h3></div>" );
 
     for (var i = 0 ; i < data.length ; i ++) {
     	tmp = data[i].filter(function (e) {
@@ -284,7 +328,7 @@ function setDayViewContent(data, date) {
                 }
 			}
 		});
-    	dayCards.append("<div class='day_card'><h4>User:&nbsp;"
+    	dayCards.append("<div class='day_card'><h4>User&nbsp;"
 			+ e[0].user_id + "</h4><table class='day_card_table'>"
 			+ "<tr><td class='day_card_table_content'>"
 			+ "<div style='display: inline-block; background-color: #69bcbe; width: 10px; height: 10px'></div>"
