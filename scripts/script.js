@@ -85,6 +85,9 @@ function init(data) {
     else if (dataStartDate > endDate) {
         setContent('month')(data, dataStartDate);
     }
+    else {
+        setContent('month')(data, d);
+	}
 
     openTab(this, 'calendar_view', null);
 
